@@ -41,7 +41,8 @@ def reqshift(data,fshift=100,sample_rate=4096):
     return z
 
 
-def plot_SNR(time, timemax, SNR, pcolor, eventname, det, plottype):
+def plot_SNR(time, timemax, SNR, pcolor, eventname, det, plottype, doplt):
+
 	plt.figure(figsize=(10,8))
 	plt.subplot(2,1,1)
 	plt.plot(time-timemax, SNR, pcolor,label=det+' SNR(t)')
@@ -90,16 +91,19 @@ def plot_whitened(time, tevent, strain_whitenbp, pcolor, det, timemax, template_
                  
 # -- Display PSD and template
 # must multiply by sqrt(f) to plot template fft on top of ASD:
-def plot_ASD(template_fft,datafreq, d_eff, freqs, data_psd, pcolor, det, fs, eventname, plottype):
-	plt.figure(figsize=(10,6))
-	template_f = np.absolute(template_fft)*np.sqrt(np.abs(datafreq)) / d_eff
-	plt.loglog(datafreq, template_f, 'k', label='template(f)*sqrt(f)')
-	plt.loglog(freqs, np.sqrt(data_psd),pcolor, label=det+' ASD')
-	plt.xlim(20, fs/2)
-	plt.ylim(1e-24, 1e-20)
-	plt.grid()
-	plt.xlabel('frequency (Hz)')
-	plt.ylabel('strain noise ASD (strain/rtHz), template h(f)*rt(f)')
-	plt.legend(loc='upper left')
-	plt.title(det+' ASD and template around event')
-	plt.savefig('figures/'+eventname+"_"+det+"_matchfreq."+plottype)
+def plot_ASD(template_fft,datafreq, d_eff, freqs, data_psd, pcolor, det, fs, eventname, plottype, doplt):
+	if doplt == True:
+		plt.figure(figsize=(10,6))
+		template_f = np.absolute(template_fft)*np.sqrt(np.abs(datafreq)) / d_eff
+		plt.loglog(datafreq, template_f, 'k', label='template(f)*sqrt(f)')
+		plt.loglog(freqs, np.sqrt(data_psd),pcolor, label=det+' ASD')
+		plt.xlim(20, fs/2)
+		plt.ylim(1e-24, 1e-20)
+		plt.grid()
+		plt.xlabel('frequency (Hz)')
+		plt.ylabel('strain noise ASD (strain/rtHz), template h(f)*rt(f)')
+		plt.legend(loc='upper left')
+		plt.title(det+' ASD and template around event')
+		plt.savefig('figures/'+eventname+"_"+det+"_matchfreq."+plottype)
+	else:
+		return template_fft,datafreq, d_eff, freqs, data_psd, pcolor, det, fs, eventname, plottype, doplt
